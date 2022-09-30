@@ -7,7 +7,6 @@ repos:
         name: black
         language: system
         entry: black
-        args: ["--check"]
         types: [python]
       - id: isort
         name: isort
