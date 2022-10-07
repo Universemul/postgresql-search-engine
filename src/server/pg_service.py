@@ -46,3 +46,9 @@ class PgService:
         cur = self.db.cursor()
         cur.execute(sql, (query,))
         return [{"id": x[0], "highlight": x[1]} for x in cur.fetchall()]
+
+    def get_cities(self) -> List:
+        sql = "SELECT name, lat, lon FROM full_search"
+        cur = self.db.cursor()
+        cur.execute(sql)
+        return [{"name": x[0], "lat": x[1], "lon": x[2]} for x in cur.fetchall()]

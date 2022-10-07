@@ -13,6 +13,9 @@
             height: 600px;
         }
     </style>
+    <script>
+        var loadedCities = {{ cities|tojson }};
+    </script>
     <title></title>
 </head>
 <body style="padding:10px;">
@@ -32,7 +35,7 @@
         </li>
     </ul>
     <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="full_search" role="tabpanel" aria-labelledby="full_search-tab">
+        <div class="tab-pane fade" id="full_search" role="tabpanel" aria-labelledby="full_search-tab">
             <div class="input-group mb-3" style="padding: 20px;">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
                        id="full_search_input">
@@ -52,9 +55,13 @@
                 </ul>
             </div>
         </div>
-        <div class="tab-pane fade" id="spatial_search" role="tabpanel" aria-labelledby="spatial_search-tab">
-            <div class="input-group mb-3" style="padding: 20px;">
-                <div class="input-group-append">
+        <div class="tab-pane fade show active" id="spatial_search" role="tabpanel" aria-labelledby="spatial_search-tab">
+            <div class="form-group" style="padding: 20px;">
+                <label for="radius_input">Radius <small id="emailHelp" class="form-text text-muted">(in
+                    kilometers)</small></label>
+                <input class="form-control" type="text" placeholder="Search" aria-label="Radius" style="width: 50px;"
+                       id="radius_input" name="radius_input" value="10">
+                <div class="input-group-append" style="margin-top: 10px;">
                     <button class="btn btn-outline-success" type="submit" id="spatial_search_btn">Search
                     </button>
                 </div>

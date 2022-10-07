@@ -48,7 +48,8 @@ def full_search(query: str) -> flask.Response:
 
 @app.route("/")
 def home():
-    return render_template("home.html")
+    cities = service.get_cities()
+    return render_template("home.html", cities=cities)
 
 
 if __name__ == "__main__":
