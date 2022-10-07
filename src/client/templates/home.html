@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title></title>
+</head>
+<body style="padding:10px;">
+<div class="container">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="full_search-tab" data-bs-toggle="tab" data-bs-target="#full_search"
+                    type="button"
+                    role="tab" aria-controls="home" aria-selected="true">Full Text Search
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="spatial_search-tab" data-bs-toggle="tab" data-bs-target="#spatial_search"
+                    type="button"
+                    role="tab" aria-controls="profile" aria-selected="false">Spatial Search
+            </button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="full_search" role="tabpanel" aria-labelledby="full_search-tab">
+            <div class="input-group mb-3" style="padding: 20px;">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                       id="full_search_input">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-success" type="submit" id="full_text_search_btn" disabled>Search
+                    </button>
+                </div>
+            </div>
+            <div id="full_search_result_div" style="visibility: collapse;">
+                <p id="full_search_count"></p>
+                <p>Results</p>
+                <ul class="list-group list-group-flush" id="full_search_result">
+                </ul>
+
+                <p style="padding-top: 20px;">Highlighted Results</p>
+                <ul class="list-group list-group-flush" id="full_search_highlight_result">
+                </ul>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="spatial_search" role="tabpanel" aria-labelledby="spatial_search-tab">
+            TODO
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="{{ url_for('static', filename='full_search.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+</body>
+</html>

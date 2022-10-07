@@ -1,63 +1,33 @@
 import json
 import urllib.parse
+from typing import List
 
 import flask
-import psycopg2
+from flask import render_template
 
-app = flask.Flask(__name__)
+from src.server.pg_service import PgService
 
-# Port on which JSON should be served up
+app = flask.Flask(
+    __name__, template_folder="../client/templates", static_folder="../client/static"
+)
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+
+# Port of the app
 PORT = 8001
 
-# Database connection info
-DB_NAME = "test_search"
-DB_HOST = "localhost"
-DB_USER = "postgres"
-DB_PASSWORD = "postgres"
-
-DB = psycopg2.connect(
-    f"dbname='{DB_NAME}' user='{DB_USER}' host='{DB_HOST}' password='{DB_PASSWORD}'"
-)
+service = PgService()
 
 
-def _count(query: str):
-    sql = """
-        SELECT count(*)
-        FROM full_search
-        WHERE search_field @@ to_tsquery(%s)
-    """
-    cur = DB.cursor()
-    cur.execute(sql, (query,))
-    return cur.fetchone()[0]
+def _count(query: str) -> int:
+    return service.full_search_count(query)
 
 
-def _do_full_text_search(query: str):
-    sql = """
-        SELECT id, name
-        FROM full_search
-        WHERE search_field @@ to_tsquery(%s)
-    """
-    cur = DB.cursor()
-    cur.execute(sql, (query,))
-    return [{"id": x[0], "name": x[1]} for x in cur.fetchall()]
+def _do_full_text_search(query: str) -> List:
+    return service.full_search(query)
 
 
-def _do_highlights_full_text_search(query: str):
-    sql = """
-        WITH q AS (SELECT plainto_tsquery(%s) AS query),
-        ranked AS (
-            SELECT id, name, ts_rank(search_field, query) AS rank
-            FROM full_search, q
-            WHERE q.query @@ search_field
-            ORDER BY rank DESC
-        )
-        SELECT id, ts_headline(name, q.query)
-        FROM ranked, q
-        ORDER BY ranked DESC
-    """
-    cur = DB.cursor()
-    cur.execute(sql, (query,))
-    return [{"id": x[0], "highlight": x[1]} for x in cur.fetchall()]
+def _do_highlights_full_text_search(query: str) -> List:
+    return service.full_search_highlight(query)
 
 
 @app.route("/full_search/<query>")
@@ -74,6 +44,11 @@ def full_search(query: str) -> flask.Response:
         }
     )
     return flask.Response(response=response, content_type="application/json")
+
+
+@app.route("/")
+def home():
+    return render_template("home.html")
 
 
 if __name__ == "__main__":
