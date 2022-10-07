@@ -1,3 +1,4 @@
+# flake8: noqa
 import json
 from dataclasses import dataclass
 from typing import List
@@ -47,15 +48,24 @@ def init_db(cities: List[City]):
 
     # DROP AND CREATE THE SEARCH TABLE
     cur.execute(f"DROP TABLE IF EXISTS {TABLE}")
-    cur.execute(f"CREATE TABLE {TABLE} (id SERIAL, name Text, normalize_name Text)")
+    cur.execute(
+        f"CREATE TABLE {TABLE} (id SERIAL, name Text, normalize_name Text, lat NUMERIC , lon NUMERIC, point Geometry)"
+    )
 
     # FORMAT THE CITIES BEFORE INSERTING IN THE DATABASE
     cities_dict = [
-        {"id": x.id, "name": x.name, "normalize_name": remove_accents(x.name.lower())}
+        {
+            "id": x.id,
+            "name": x.name,
+            "normalize_name": remove_accents(x.name.lower()),
+            "lat": x.gps_lat,
+            "lon": x.gps_lng,
+            "point": f"point({x.gps_lat} {x.gps_lng})",
+        }
         for x in cities
     ]
     cur.executemany(
-        f"INSERT INTO {TABLE}(id,name,normalize_name) VALUES (%(id)s, %(name)s, %(normalize_name)s)",
+        f"INSERT INTO {TABLE}(id,name,normalize_name,lat,lon,point) VALUES (%(id)s, %(name)s, %(normalize_name)s, %(lat)s, %(lon)s, ST_GeomFromText(%(point)s, 4326))",
         cities_dict,
     )
 
@@ -70,6 +80,7 @@ def init_db(cities: List[City]):
     )
     # CREATE INDEX
     cur.execute(f"CREATE INDEX city_idx ON {TABLE} USING GIN (search)")
+    cur.execute(f"CREATE INDEX city_spatial ON {TABLE} USING GIST (point)")
     # SAVE THE INSERTS
     conn.commit()
     print("INSERT DONE")
