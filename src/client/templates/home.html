@@ -12,10 +12,17 @@
         #map {
             height: 600px;
         }
+
+        @keyframes fade {
+            from {
+                opacity: 0.5;
+            }
+        }
+
+        .blinking {
+            animation: fade 1s infinite alternate;
+        }
     </style>
-    <script>
-        var loadedCities = {{ cities|tojson }};
-    </script>
     <title></title>
 </head>
 <body style="padding:10px;">
@@ -59,8 +66,8 @@
             <div class="form-group" style="padding: 20px;">
                 <label for="radius_input">Radius <small id="emailHelp" class="form-text text-muted">(in
                     kilometers)</small></label>
-                <input class="form-control" type="text" placeholder="Search" aria-label="Radius" style="width: 50px;"
-                       id="radius_input" name="radius_input" value="10">
+                <input class="form-control" type="number" placeholder="Search" aria-label="Radius"
+                       id="radius_input" name="radius_input" value="5" max="30" min="1">
                 <div class="input-group-append" style="margin-top: 10px;">
                     <button class="btn btn-outline-success" type="submit" id="spatial_search_btn">Search
                     </button>

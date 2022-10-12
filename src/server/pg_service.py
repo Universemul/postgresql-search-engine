@@ -47,8 +47,22 @@ class PgService:
         cur.execute(sql, (query,))
         return [{"id": x[0], "highlight": x[1]} for x in cur.fetchall()]
 
-    def get_cities(self) -> List:
-        sql = "SELECT name, lat, lon FROM full_search"
+    def get_cities(self, lat: float, lon: float, radius: int) -> List:
         cur = self.db.cursor()
-        cur.execute(sql)
-        return [{"name": x[0], "lat": x[1], "lon": x[2]} for x in cur.fetchall()]
+        sql = """
+            SELECT name, round(lat, 6), round(lon, 6)
+            FROM full_search, (SELECT ST_MakePoint(%s, %s)::geography AS poi) AS f
+            WHERE ST_DWithin(point, poi, %s);
+        """
+        cur.execute(
+            sql,
+            (
+                lat,
+                lon,
+                radius,
+            ),
+        )
+        return [
+            {"name": x[0], "lat": float(x[1]), "lon": float(x[2])}
+            for x in cur.fetchall()
+        ]
