@@ -30,6 +30,12 @@ def _do_highlights_full_text_search(query: str) -> List:
     return service.full_search_highlight(query)
 
 
+@app.route("/getCities/<lat>/<lon>/<radius>")
+def get_cities(lat: str, lon: str, radius: str) -> flask.Response:
+    cities = json.dumps(service.get_cities(float(lat), float(lon), int(radius)))
+    return flask.Response(response=cities, content_type="application/json")
+
+
 @app.route("/full_search/<query>")
 def full_search(query: str) -> flask.Response:
     query = urllib.parse.unquote(query)
